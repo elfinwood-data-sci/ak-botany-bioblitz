@@ -1,0 +1,88 @@
+---
+title: "ACCS Rare Plant List Processing"
+author: "Aaron F. Wells"
+date: "2022-09-14"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+### Libraries
+```{r}
+library(tidyverse)
+library(dplyr)
+library(readr)
+library(stringr)
+library(RPostgreSQL)
+library(rstudioapi)
+```
+
+
+### Import data
+```{r}
+rarelist <- read_csv("species_list_qaqc - rare_list.csv")
+```
+
+### Flag subspecies and varieties
+```{r}
+rarelist_log <- rarelist %>% 
+            mutate(ssp_var = grepl("ssp.", rarelist$sciname_with_author, fixed = TRUE) | 
+                     grepl("var.", rarelist$sciname_with_author, fixed = TRUE))
+
+```
+
+### Split out scientific names from authors
+```{r}
+
+rarelist_w_sciname <- rarelist_log %>%
+          mutate(genus = word(rarelist_log$sciname_with_author,1)) %>%
+            mutate(species = word(rarelist_log$sciname_with_author,2)) %>%
+              mutate(third_word = word(rarelist_log$sciname_with_author,3)) %>%
+                mutate(fourth_word = word(rarelist_log$sciname_with_author,4)) %>%
+                        mutate(sciname_only = case_when(
+                          ssp_var == "TRUE" ~ paste(genus,species,third_word,fourth_word),
+                          ssp_var == "FALSE" ~ paste(genus,species),
+                          TRUE ~ "other"
+                        )) %>%
+                          mutate(intraspecific_qualifier = case_when(
+                            ssp_var == "TRUE" ~ third_word,
+                            ssp_var == "FALSE" ~ "NULL",
+                            TRUE ~ "other"
+                          )) %>%
+                            mutate(intraspecies = case_when(
+                              ssp_var == "TRUE" ~ fourth_word,
+                              ssp_var == "FALSE" ~ "NULL",
+                              TRUE ~ "other"
+                            ))
+rarelist_w_sciname[11:20,c(1,8:13)]
+rarelist_pgimport <- rarelist_w_sciname[,c(1:8,c(11:13))]
+rarelist_pgimport
+```
+
+### Export CSV
+```{r}
+write.csv(rarelist_pgimport,"rarelist_pgimport.csv")
+
+```
