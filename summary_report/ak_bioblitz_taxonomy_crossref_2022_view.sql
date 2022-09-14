@@ -1,8 +1,8 @@
--- View: public.ak_bioblitz_taxonomy_crossref_2022_view
+-- View: bioblitz.ak_bioblitz_taxonomy_crossref_2022_view
 
--- DROP VIEW public.ak_bioblitz_taxonomy_crossref_2022_view;
+-- DROP VIEW bioblitz.ak_bioblitz_taxonomy_crossref_2022_view;
 
---CREATE OR REPLACE VIEW public.ak_bioblitz_taxonomy_crossref_2022_view AS
+CREATE OR REPLACE VIEW bioblitz.ak_bioblitz_taxonomy_crossref_2022_view AS
 
 WITH d AS (SELECT scientific_name, taxon_family_name, taxon_genus_name, taxon_species_name, taxon_subspecies_name, taxon_variety_name, quality_grade,
 	CASE
@@ -71,7 +71,7 @@ WITH d AS (SELECT scientific_name, taxon_family_name, taxon_genus_name, taxon_sp
 					WHEN sciname = 'Neottia banksiana' THEN 'Listera caurina' --ITIS syn
 					WHEN sciname = 'Rhinanthus groenlandicus' THEN 'Rhinanthus minor'
 					WHEN sciname = 'Pedicularis sylvatica' THEN 'NO MATCH'
-					WHEN sciname = 'Pedicularis sudetica' THEN 'NO MATCH' --NEED TO COME BACK TO THIS
+					WHEN sciname = 'Pedicularis sudetica' THEN 'Pedicularis sudetica ssp. interior' --Zoe's observation
 					WHEN sciname = 'Ulota crispa' THEN 'NO MATCH'
 					WHEN sciname = 'Picea pungens' THEN sciname -- cultivar
 					WHEN sciname = 'Pinus mugo' THEN 'NO MATCH'
@@ -131,12 +131,10 @@ WITH d AS (SELECT scientific_name, taxon_family_name, taxon_genus_name, taxon_sp
 	SELECT * FROM matching
 	UNION
 	SELECT * FROM nomatch
-	ORDER BY taxon_family_name DESC, sciname
-/*	;
+	ORDER BY taxon_family_name DESC, sciname;
 
-ALTER TABLE public.ak_bioblitz_taxonomy_crossref_2022_view
+ALTER TABLE bioblitz.ak_bioblitz_taxonomy_crossref_2022_view
     OWNER TO postgres;
-COMMENT ON VIEW public.ak_bioblitz_taxonomy_crossref_2022_view
+COMMENT ON VIEW bioblitz.ak_bioblitz_taxonomy_crossref_2022_view
     IS 'This view prepares a cross reference table between the iNaturalist taxonomic names and the accepted names in the new Flora of Alaska from the AKVEG database.';
-*/
 
