@@ -71,7 +71,7 @@ WITH d AS (SELECT scientific_name, taxon_family_name, taxon_genus_name, taxon_sp
 					WHEN sciname = 'Neottia banksiana' THEN 'Listera caurina' --ITIS syn
 					WHEN sciname = 'Rhinanthus groenlandicus' THEN 'Rhinanthus minor'
 					WHEN sciname = 'Pedicularis sylvatica' THEN 'NO MATCH'
-					WHEN sciname = 'Pedicularis sudetica' THEN 'Pedicularis sudetica ssp. interior' --Zoe's observation
+					WHEN sciname = 'Pedicularis sudetica' THEN 'Pedicularis interior' --Zoe's observation of Pedicularis sudetica ssp. interior
 					WHEN sciname = 'Ulota crispa' THEN 'NO MATCH'
 					WHEN sciname = 'Picea pungens' THEN sciname -- cultivar
 					WHEN sciname = 'Pinus mugo' THEN 'NO MATCH'
