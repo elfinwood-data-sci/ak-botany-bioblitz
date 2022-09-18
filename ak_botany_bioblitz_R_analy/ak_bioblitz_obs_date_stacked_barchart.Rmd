@@ -46,7 +46,7 @@ library('lubridate')
 ```{r}
 con <- dbConnect(drv =PostgreSQL(), 
                  user="aaronwells", 
-                 password="waLatKa08mNts#",
+                 password="",
                  host="localhost", 
                  port=5435, 
                  dbname="flora_of_csp")
@@ -70,4 +70,41 @@ dobs_tz <- dobs %>% mutate(obs_on_date_w_tz = force_tz(dobs$observed_on_date,"Am
 ```{r}
 dobs_tz_doy <- dobs %>% mutate(doy = wday(dobs_tz$obs_on_date_w_tz, label=TRUE))
 dobs_tz_doy
+```
+
+### Stacked bar chart
+```{r}
+group_colors <- c("#ADADAD","#4F4F4F") #,"#e66101","#CC79A7", #"#924900",
+
+#pdf("FigX_bioblitz_obs_by_date_barchart.pdf", width = 6.5, height = 5.0 )
+#setEPS()
+#postscript(file = "65469_0R-1-A_Wellsetal_VCS_ArcticPA_Fig06_Site_pH_by_alliance.eps", family="ArialMT", height= 5.0, width = 6.5)
+tiff("FigX_bioblitz_obs_by_date_barchart.tiff", height = 5.0,width = 6.5,units = "in", res = 300, compression = "lzw")
+
+f <- ggplot(data = dobs_tz_doy, aes(fill = quality_grade)) +
+  #geom_linerange( aes(x=observed_on_date, ymin=-10, ymax=800), colour="black", alpha=0.9, size=1.3) +
+  geom_bar( aes(x=observed_on_date, y=count), stat="identity", alpha=1.0) +
+  scale_fill_manual(values = group_colors,name="Quality Grade") +
+  #theme(plot.margin = unit(c(0.10,0.10,1.50,0.10),"in")) +
+  #theme(axis.text.x=element_text(angle = 45, hjust=0.5)) +
+  #scale_x_continuous(name="Date") +
+  xlab("Date") +
+  scale_y_continuous(name="Number of Observations")  +
+  #scale_x_date(date_breaks = "1 week", date_labels = "%W") +
+  scale_x_date(date_minor_breaks = "1 day") +
+  theme_bw()
+
+#f <- f + theme(
+#                axis.text.x = element_text(angle = 60, hjust = 1,size = 12,color = "black"),
+#                axis.text.y = element_text(size = 12),
+#                axis.title.x = element_blank(),
+#                axis.title.y = element_text(size = 15),
+#                legend.title = element_text(size = 12, face = "bold"),
+#                legend.text = element_text(size = 10)
+#               )
+
+plot(f)
+
+dev.off()
+
 ```
