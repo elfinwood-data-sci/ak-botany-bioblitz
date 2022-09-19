@@ -1,10 +1,11 @@
 WITH d AS (SELECT accepted_id, name_accepted, auth_accepted_id, accepted_author, hierarchy_id, link_source, family_id, accepted_family, level_id, level, habit_id, habit, category_id, category, native, non_native, taxon_source_id, accepted_taxon_source, accepted_citation, adjudicated_id, name_adjudicated, auth_adjudicated_id, adjudicated_author, status_adjudicated_id, taxon_status
 	FROM public.flora_of_ak_accepted_join_adjudicated_view
-	WHERE taxon_status = 'accepted' AND level = 'genus'
+	WHERE taxon_status = 'accepted' AND level NOT IN ('genus','unknown')
 	--AND level IN ('genus','subspecies','variety','hybrid','species')
-	AND habit IN ('Lichen')
+	AND habit LIKE ('%Shrub%')--('Moss','Liverwort','Hornwort','Algae','Lichen')
 		   )
 		   SELECT * FROM d 
+		   --GROUP BY level
 		   
 		  -- GROUP BY accepted_family
 	
